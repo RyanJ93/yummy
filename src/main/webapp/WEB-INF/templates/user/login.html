@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+    <main class="d-flex w-100 h-100 flex-column">
+        <header class="bg-primary w-100" style="height: 54px;"></header>
+        <div class="w-100 d-flex justify-content-center flex-grow-1">
+            <form class="align-self-center" action="#" th:action="@{/login}" th:object="${form}" method="post">
+                <h2 class="mb-4">Authenticate with your account</h2>
+                <div class="alert alert-danger mb-4 p-2 fs-6" th:if="${generalErrorMessage}" th:text="${generalErrorMessage}"></div>
+                <div class="form-floating mt-4">
+                    <input class="form-control" th:errorclass="is-invalid" id="username" type="text" placeholder="Username" th:field="*{username}" />
+                    <label for="username" class="text-muted">Username</label>
+                    <p class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+                </div>
+                <div class="form-floating mt-2">
+                    <input class="form-control" th:errorclass="is-invalid" id="password" type="password" placeholder="Password" th:field="*{password}" />
+                    <label for="password" class="text-muted">Password</label>
+                    <p class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+                </div>
+                <div class="mt-2">
+                    <input type="checkbox" name="remember-me" id="remember-me" />
+                    <label for="remember-me">Remember me</label>
+                </div>
+                <div class="w-100 p-0 m-0 mt-4 text-center">
+                    <input type="submit" class="btn btn-primary px-4" value="Login" />
+                </div>
+            </form>
+        </div>
+        <footer th:insert="partials/footer"></footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+    <main class="centered-content py-4 px-2">
+        <div class="row">
+            <div class="col-12 mt-2 mb-2" th:if="${hasFlashMessages}" th:insert="partials/flash_messages"></div>
+            <div class="col-auto flex-grow-1">
+                <h1>My orders</h1>
+            </div>
+            <div class="col-auto align-self-center">
+                <a class="btn btn-primary" th:href="@{|/public/table/${restaurantTable.id}/menu|}">Menu</a>
+            </div>
+        </div>
+        <div th:if="${orderList.isEmpty()}">
+            <ul class="list-group mt-4">
+                <li class="list-group-item">
+                    <p class="text-center text-muted fst-italic fs-6">No order found</p>
+                </li>
+            </ul>
+        </div>
+        <div class="mt-4" th:if="${!orderList.isEmpty()}">
+            <ul class="list-group">
+                <li class="list-group-item" th:attr="data-order-id=${order.id}, data-order-name=${order.menuItem == null ? '[DELETED MENU ITEM]' : order.menuItem.name}" th:each="order: ${orderList}">
+                    <div class="row w-100 m-0 p-0">
+                        <div class="col-auto flex-grow-1">
+                            <p th:class="${'p-0 m-0 fs-4 ' + ( order.ready && order.received ? 'text-decoration-line-through' : '' )}">
+                                <span th:text="${order.menuItem == null ? '[DELETED MENU ITEM]' : order.menuItem.name}"></span>
+                                <span class="ml-1 text-muted fs-6" th:text="'(x' + ${order.quantity} + ')'"></span>
+                            </p>
+                        </div>
+                        <div class="col-auto p-0 pe-4 me-4 border-end">
+                            <p class="p-0 m-0 fs-4 fst-italic" th:text="${order.menuItem == null ? '-' : ( ( order.menuItem.price * order.quantity ) + '$' )}"></p>
+                        </div>
+                        <div class="col-auto p-0">
+                            <a class="btn btn-primary me-2" th:class="${'btn me-2 ' + ( order.received ? 'btn-success' : 'btn-warning' )}" th:href="@{|/public/table/${restaurantTable.id}/order/${order.id}/toggle-received|}" title="Toggle received status.">
+                                <i class="bi bi-send-check"></i>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="mt-4">
+            <p class="m-0">Order list items count: <span th:text="${itemCount}"></span></p>
+            <p class="m-0 fs-5">Subtotal: <span th:text="${subtotal}"></span>$</p>
+        </div>
+    </main>
+</body>
+</html>

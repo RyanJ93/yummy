@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+<header th:insert="partials/header"></header>
+<nav th:insert="partials/nav"></nav>
+<main class="content">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">User</li>
+    </ol>
+    <div class="row">
+        <div class="col-12 mt-2 mb-2" th:if="${hasFlashMessages}" th:insert="partials/flash_messages"></div>
+        <div class="col-auto flex-grow-1">
+            <h3>Available panel users</h3>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-primary" th:href="@{/user/create}" th:if="${isAdminUser}">
+                <i class="bi bi-plus-circle-fill"></i>
+            </a>
+        </div>
+    </div>
+    <div th:if="${userList.isEmpty()}">
+        <ul class="list-group mt-4">
+            <li class="list-group-item">
+                <p class="text-center text-muted fst-italic fs-6">No user found</p>
+            </li>
+        </ul>
+    </div>
+    <div class="mt-4" th:if="${!userList.isEmpty()}">
+        <ul class="list-group">
+            <li class="list-group-item" th:attr="data-user-id=${user.id}, data-user-username=${user.username}" th:each="user: ${userList}">
+                <div class="row w-100 m-0 p-0 flex-nowrap">
+                    <div class="col-auto flex-grow-1 flex-shrink-1 ps-0">
+                        <p class="p-0 m-0 fs-4" th:text="${user.username}"></p>
+                    </div>
+                    <div class="col-auto p-0" th:if="${isAdminUser}">
+                        <a class="btn btn-primary me-2" th:href="@{|/user/${user.id}/edit|}" title="Edit this user.">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a class="btn btn-primary me-2" th:href="@{|/user/${user.id}/change-password|}" title="Change password for this user.">
+                            <i class="bi bi-key-fill"></i>
+                        </a>
+                        <a class="btn btn-danger" th:href="@{|/user/${user.id}/delete|}" title="Delete this user." onclick="confirmDelete(event);">
+                            <i class="bi bi-trash3-fill"></i>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <p class="text-muted fst-italic">Note that root user is not displayed here.</p>
+    <ul class="pagination mt-4">
+        <li class="page-item" th:if="${pageNumber > 1 && numPages > 1}">
+            <a class="page-link" th:href="@{|/user?page=${pageNumber - 1}|}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(1, numPages, 1)}" th:class="${'page-item ' + (i == pageNumber ? 'active' : '')}">
+            <a class="page-link" th:href="@{|/user?page=${i}|}" th:text="${i}"></a>
+        </li>
+        <li class="page-item" th:if="${pageNumber < numPages}">
+            <a class="page-link" th:href="@{|/user?page=${pageNumber + 1}|}">Next</a>
+        </li>
+    </ul>
+    <div th:insert="partials/delete_confirm_modal"></div>
+</main>
+</body>
+<script type="text/javascript">
+    function confirmDelete(event){
+        event.preventDefault();
+        event.stopPropagation();
+        const username = event.target.closest('li[data-user-id]').getAttribute('data-user-username');
+        const text = 'Do you really want to delete user "' + username + '"?';
+        const url = event.target.closest('a.btn').href;
+        const title = 'Confirm user delete';
+        openConfirmModal(url, title, text);
+    }
+</script>
+</html>

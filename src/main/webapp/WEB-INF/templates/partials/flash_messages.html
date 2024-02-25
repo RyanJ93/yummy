@@ -1,0 +1,8 @@
+<div class="alert alert-danger mb-4 alert-dismissible fade show" role="alert" th:if="${generalErrorMessage}">
+    <span th:text="${generalErrorMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<div class="alert alert-success mb-4 alert-dismissible fade show" role="alert" th:if="${lastActionMessage}">
+    <span th:text="${lastActionMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+    <main class="centered-content py-4 px-2">
+        <div class="row">
+            <div class="col-12 mt-2 mb-2" th:if="${hasFlashMessages}" th:insert="partials/flash_messages"></div>
+            <div class="col-auto flex-grow-1">
+                <h1 th:text="${menu.name}"></h1>
+            </div>
+            <div class="col-auto align-self-center">
+                <a class="btn btn-primary" th:href="@{|/public/table/${restaurantTable.id}/order|}">My orders</a>
+            </div>
+        </div>
+        <div class="mt-4" th:each="instance: ${expandedMenu}">
+            <div class="jumbotron">
+                <p class="lead fs-3" th:if="instance.key != null" th:text="${instance.key}"></p>
+                <div class="mt-2 row">
+                    <div th:each="menuItem: ${instance.value}" class="col-12 mt-4">
+                        <div class="card">
+                            <div class="row flex-nowrap g-0">
+                                <div class="col-auto">
+                                    <img class="img-fluid rounded-start h-100" th:if="${menuItem.picture != null}" th:src="@{|/storage/${menuItem.picture}|}" th:alt="${menuItem.name}" style="max-width: 320px;" />
+                                    <img class="img-fluid rounded-start h-100" th:if="${menuItem.picture == null}" th:src="@{/resources/no_dish_image.jpg}" th:alt="${menuItem.name}" style="max-width: 320px;" />
+                                </div>
+                                <div class="col-auto flex-grow-1 flex-shrink-1">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-auto flex-grow-1">
+                                                <p class="fs-5" th:text="${menuItem.name}"></p>
+                                            </div>
+                                            <div class="col-auto text-end">
+                                                <p class="fs-5 text-muted fw-bold" th:text="${menuItem.price + '$'}"></p>
+                                            </div>
+                                        </div>
+                                        <p class="fs-6 m-0" th:text="${menuItem.description}"></p>
+                                        <p class="fst-italic fs-6 m-0 mt-3" th:text="${menuItem.ingredients}"></p>
+                                        <form class="mt-4 row" th:action="@{|/public/table/${restaurantTable.id}/order/create|}" method="post">
+                                            <div class="col-auto flex-grow-1">
+                                                <div style="max-width: 320px;">
+                                                    <label th:for="${'quantity-' + menuItem.id}" class="form-label m-0">Quantity</label><span class="text-muted ms-1 quantity-label">(1)</span>
+                                                    <input type="range" class="form-range w-100" min="0" max="10" value="1" step="1" th:id="${'quantity-' + menuItem.id}" name="quantity" onchange="updateLabel(event);" />
+                                                    <input type="hidden" th:value="${menuItem.id}" name="menuItemId" />
+                                                </div>
+                                            </div>
+                                            <div class="col-auto text-end align-self-center">
+                                                <input type="submit" value="Order" class="btn btn-primary" />
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+<script type="text/javascript">
+    function updateLabel(event){
+        const labelElement = event.target.parentNode.querySelector('span.quantity-label');
+        labelElement.textContent = '(' + event.target.value + ')';
+    }
+</script>
+</html>

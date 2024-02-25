@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+<header th:insert="partials/header"></header>
+<nav th:insert="partials/nav"></nav>
+<main class="content">
+    <h2 class="m-0">Welcome back <span class="fw-bold" th:text="${userDetails.username}"></span>!</h2>
+    <h4 class="text-muted">Select a section to start</h4>
+</main>
+</body>
+</html>

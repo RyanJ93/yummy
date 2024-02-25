@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+<header th:insert="partials/header"></header>
+<nav th:insert="partials/nav"></nav>
+<main class="content">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a th:href="@{/user}">User</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+    </ol>
+    <div class="row">
+        <div class="col-auto flex-grow-1">
+            <h3>Create a new user</h3>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-primary" th:href="@{/user}">Back</a>
+        </div>
+    </div>
+    <form class="mt-4" action="#" th:action="@{/user/create}" th:object="${form}" method="post" autocomplete="off">
+        <div class="form-floating">
+            <input class="form-control" th:errorclass="is-invalid" id="username" type="text" placeholder="Username" th:field="*{username}" autocomplete="off" />
+            <label for="username" class="text-muted">Username</label>
+            <p class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+        </div>
+        <div class="form-floating mt-2">
+            <input class="form-control" th:errorclass="is-invalid" id="password" type="password" placeholder="Password" th:field="*{password}" autocomplete="off" />
+            <label for="password" class="text-muted">Password</label>
+            <p class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+        </div>
+        <div class="form-floating mt-2">
+            <input class="form-control" th:errorclass="is-invalid" id="password-confirm" type="password" placeholder="Password confirm" th:field="*{passwordConfirm}" autocomplete="off" />
+            <label for="password-confirm" class="text-muted">Password confirm</label>
+            <p class="text-danger" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></p>
+        </div>
+        <div class="row w-100 p-0 m-0 mt-4">
+            <div class="col-6 p-0 text-start">
+                <a class="btn btn-danger" th:href="@{/user}">Cancel</a>
+            </div>
+            <div class="col-6 p-0 text-end">
+                <input type="submit" class="btn btn-primary" value="Create" />
+            </div>
+        </div>
+    </form>
+</main>
+</body>
+</html>

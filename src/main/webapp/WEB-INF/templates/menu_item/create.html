@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+<header th:insert="partials/header"></header>
+<nav th:insert="partials/nav"></nav>
+<main class="content">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a th:href="@{/menu}">Menu</a>
+        </li>
+        <li class="breadcrumb-item" th:text="${menu.name}"></li>
+        <li class="breadcrumb-item">
+            <a th:href="@{|/menu/${menu.id}/menu-item|}">Menu Items</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+    </ol>
+    <div class="row">
+        <div class="col-auto flex-grow-1">
+            <h3>Create a new menu item</h3>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-primary" th:href="@{|/menu/${menu.id}/menu-item|}">Back</a>
+        </div>
+    </div>
+    <form class="mt-4" action="#" th:action="@{|/menu/${menu.id}/menu-item/create|}" th:object="${form}" method="post" enctype="multipart/form-data">
+        <div class="form-floating">
+            <input class="form-control" id="name" th:errorclass="is-invalid" type="text" placeholder="Name" th:field="*{name}" />
+            <label for="name" class="text-muted">Name</label>
+            <p class="text-danger fs-6 m-0 fst-italic" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+        </div>
+        <div class="form-floating mt-2">
+            <textarea class="form-control" id="description" th:errorclass="is-invalid" placeholder="Description" th:field="*{description}" style="height:100px;resize:none;"></textarea>
+            <label for="description" class="text-muted">Description</label>
+            <p class="text-danger fs-6 m-0 fst-italic" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+        </div>
+        <div class="form-floating mt-2">
+            <textarea class="form-control" id="ingredients" th:errorclass="is-invalid" placeholder="Ingredients" th:field="*{ingredients}" style="height:100px;resize:none;"></textarea>
+            <label for="ingredients" class="text-muted">Ingredients</label>
+            <p class="text-danger fs-6 m-0 fst-italic" th:if="${#fields.hasErrors('ingredients')}" th:errors="*{ingredients}"></p>
+        </div>
+        <div class="form-floating mt-2">
+            <input class="form-control" id="price" th:errorclass="is-invalid" type="text" placeholder="Price" th:field="*{price}" />
+            <label for="price" class="text-muted">Price</label>
+            <p class="text-danger fs-6 m-0 fst-italic" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></p>
+        </div>
+        <div class="form-floating mt-2">
+            <select class="form-control" id="menu-section" th:errorclass="is-invalid" th:field="*{menuSectionId}">
+                <option th:each="menuSection: ${menuSectionList}" th:value="${menuSection.id}" th:text="${menuSection.name}"></option>
+            </select>
+            <label for="menu-section" class="text-muted">Menu Section</label>
+            <p class="text-danger fs-6 m-0 fst-italic" th:if="${#fields.hasErrors('menuSectionId')}" th:errors="*{menuSectionId}"></p>
+        </div>
+        <div class="mt-2">
+            <label for="picture" class="text-muted">Picture</label>
+            <input class="form-control" id="picture" th:errorclass="is-invalid" type="file" accept="image/*" th:field="*{picture}" />
+            <p class="text-danger fs-6 m-0 fst-italic" th:if="${#fields.hasErrors('picture')}" th:errors="*{picture}"></p>
+        </div>
+        <div class="row w-100 p-0 m-0 mt-4">
+            <div class="col-6 p-0 text-start">
+                <a class="btn btn-danger" th:href="@{|/menu/${menu.id}/menu-item|}">Cancel</a>
+            </div>
+            <div class="col-6 p-0 text-end">
+                <input type="submit" class="btn btn-primary" value="Create" />
+            </div>
+        </div>
+    </form>
+</main>
+</body>
+</html>

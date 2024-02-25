@@ -1,0 +1,24 @@
+<div class="position-fixed h-100 bg-primary">
+    <div class="h-100 d-flex flex-column navbar-container">
+        <ul class="nav flex-column flex-grow-1">
+            <li class="nav-item w-100">
+                <a class="nav-link text-white" th:href="@{/user}">Panel Users</a>
+            </li>
+            <li class="nav-item w-100">
+                <a class="nav-link text-white" th:href="@{/menu}">Menu</a>
+            </li>
+            <li class="nav-item w-100">
+                <a class="nav-link text-white" th:href="@{/table}">Tables</a>
+            </li>
+            <li class="nav-item w-100">
+                <a class="nav-link text-white" th:href="@{/customer}">Customers</a>
+            </li>
+            <li class="nav-item w-100">
+                <form th:action="@{/logout}" method="post">
+                    <input class="btn btn-link text-white text-decoration-none" type="submit" value="Logout" />
+                </form>
+            </li>
+        </ul>
+        <footer th:insert="partials/nav_footer"></footer>
+    </div>
+</div>

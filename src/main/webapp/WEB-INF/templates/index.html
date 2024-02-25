@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+    <main class="d-flex h-100 flex-column">
+        <header class="bg-primary w-100">
+            <nav class="text-end header-navbar-container centered-content p-2">
+                <a class="btn btn-light" th:href="@{/login}" title="Login to admin panel">Login</a>
+            </nav>
+        </header>
+        <div class="w-100 pt-4 text-center m-auto flex-grow-1 centered-content p-2">
+            <img class="w-100 mb-4 logo" th:src="@{/resources/logo.png}" alt="Yummy" />
+            <h2 class="fs-1 mt-4">Yummy!</h2>
+            <h3 class="mb-4 fs-4 text-secondary">Simple restaurant order and customer manager</h3>
+        </div>
+        <footer th:insert="partials/footer"></footer>
+    </main>
+</body>
+</html>

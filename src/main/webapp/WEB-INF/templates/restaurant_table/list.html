@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+<header th:insert="partials/header"></header>
+<nav th:insert="partials/nav"></nav>
+<main class="content">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Tables</li>
+    </ol>
+    <div class="row">
+        <div class="col-12 mt-2 mb-2" th:if="${hasFlashMessages}" th:insert="partials/flash_messages"></div>
+        <div class="col-auto flex-grow-1">
+            <h3>Available tables</h3>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-primary" th:href="@{/table/create}">
+                <i class="bi bi-plus-circle-fill"></i>
+            </a>
+        </div>
+    </div>
+    <div th:if="${restaurantTableList.isEmpty()}">
+        <ul class="list-group mt-4">
+            <li class="list-group-item">
+                <p class="text-center text-muted fst-italic fs-6">No table found</p>
+            </li>
+        </ul>
+    </div>
+    <div class="mt-4" th:if="${!restaurantTableList.isEmpty()}">
+        <ul class="list-group">
+            <li class="list-group-item" th:attr="data-table-id=${restaurantTable.id}" th:each="restaurantTable: ${restaurantTableList}">
+                <div class="row w-100 m-0 p-0 flex-nowrap">
+                    <div class="col-auto flex-grow-1 flex-shrink-1 ps-0">
+                        <p class="p-0 m-0 fs-4" th:text="${restaurantTable.id}"></p>
+                        <p class="p-0 m-0 fs-6 text-muted fst-italic" th:text="${restaurantTable.availableSeats}"></p>
+                    </div>
+                    <div class="col-auto p-0">
+                        <a class="btn btn-primary me-2" th:href="@{|/table/${restaurantTable.id}/edit|}" title="Edit this table.">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a class="btn btn-danger" th:href="@{|/table/${restaurantTable.id}/delete|}" title="Delete this table." onclick="confirmDelete(event);">
+                            <i class="bi bi-trash3-fill"></i>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <ul class="pagination mt-4">
+        <li class="page-item" th:if="${pageNumber > 1 && numPages > 1}">
+            <a class="page-link" th:href="@{|/table?page=${pageNumber - 1}|}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(1, numPages, 1)}" th:class="${'page-item ' + (i == pageNumber ? 'active' : '')}">
+            <a class="page-link" th:href="@{|/table?page=${i}|}" th:text="${i}"></a>
+        </li>
+        <li class="page-item" th:if="${pageNumber < numPages}">
+            <a class="page-link" th:href="@{|/table?page=${pageNumber + 1}|}">Next</a>
+        </li>
+    </ul>
+    <div th:insert="partials/delete_confirm_modal"></div>
+</main>
+</body>
+<script type="text/javascript">
+    function confirmDelete(event){
+        event.preventDefault();
+        event.stopPropagation();
+        const tableID = event.target.closest('li[data-table-id]').getAttribute('data-table-id');
+        const text = 'Do you really want to delete table "' + tableID + '"?';
+        const url = event.target.closest('a.btn').href;
+        const title = 'Confirm table delete';
+        openConfirmModal(url, title, text);
+    }
+</script>
+</html>

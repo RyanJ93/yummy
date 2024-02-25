@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+<header th:insert="partials/header"></header>
+<nav th:insert="partials/nav"></nav>
+<main class="content">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Customers</li>
+    </ol>
+    <div class="row">
+        <div class="col-12 mt-2 mb-2" th:if="${hasFlashMessages}" th:insert="partials/flash_messages"></div>
+        <div class="col-auto flex-grow-1">
+            <h3>Customer list</h3>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-primary" th:href="@{/customer/create}">
+                <i class="bi bi-plus-circle-fill"></i>
+            </a>
+        </div>
+    </div>
+    <div th:if="${customerList.isEmpty()}">
+        <ul class="list-group mt-4">
+            <li class="list-group-item">
+                <p class="text-center text-muted fst-italic fs-6">No customer found</p>
+            </li>
+        </ul>
+    </div>
+    <div class="mt-4" th:if="${!customerList.isEmpty()}">
+        <div class="mb-2">
+            <form action="#" method="get">
+                <input type="checkbox" id="without-finalized" autocomplete="off" th:checked="${!includeFinalized}" name="withoutFinalized" />
+                <label for="without-finalized" class="form-label">Exclude finalized customers.</label>
+                <input type="submit" class="btn btn-primary btn-sm float-end" value="Apply filters" />
+            </form>
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item" th:attr="data-customer-id=${customer.id}, data-customer-name=${customer.name}" th:each="customer: ${customerList}">
+                <div class="row w-100 m-0 p-0 flex-nowrap">
+                    <div class="col-auto flex-grow-1 flex-shrink-1 ps-0">
+                        <div>
+                            <span class="fs-4" th:text="${customer.name}"></span>
+                            <span class="fs-4 text-success ms-2" th:if="${customer.finalizedAt != null}">[FINALIZED]</span>
+                        </div>
+                        <p class="p-0 m-0 fs-6 fst-italic text-muted" th:text="${'Check: ' + customer.getSubtotal() + '$'}"></p>
+                        <p class="p-0 m-0 fs-6 fst-italic text-muted" th:text="${customer.getPurchaseCount() + ' purchased items.'}"></p>
+                        <p class="p-0 m-0 fs-6 fst-italic text-muted" th:text="${'Assigned tables: ' + RestaurantTableSetViewerHelper.displayRestaurantTableSet(customer.getRestaurantTableSet())}"></p>
+                    </div>
+                    <div class="col-auto p-0">
+                        <a th:class="${'btn me-2 ' + ( customer.finalizedAt != null ? 'btn-success' : 'btn-primary' )}" th:href="@{|/customer/${customer.id}/toggle-finalized|}" title="Toggle finalized status.">
+                            <i class="bi bi-check"></i>
+                        </a>
+                        <a class="btn btn-primary me-2" th:href="@{|/customer/${customer.id}/order|}" title="Show order list.">
+                            <i class="bi bi-list-ul"></i>
+                        </a>
+                        <a class="btn btn-danger" th:href="@{|/customer/${customer.id}/delete|}" title="Delete this customer." onclick="confirmDelete(event);">
+                            <i class="bi bi-trash3-fill"></i>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <ul class="pagination mt-4">
+        <li class="page-item" th:if="${pageNumber > 1 && numPages > 1}">
+            <a class="page-link" th:href="@{/customer(page=${pageNumber - 1})}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(1, numPages, 1)}" th:class="${'page-item ' + (i == pageNumber ? 'active' : '')}">
+            <a class="page-link" th:href="@{/customer(page=${i})}" th:text="${i}"></a>
+        </li>
+        <li class="page-item" th:if="${pageNumber < numPages}">
+            <a class="page-link" th:href="@{/customer(page=${pageNumber + 1})}">Next</a>
+        </li>
+    </ul>
+    <div th:insert="partials/delete_confirm_modal"></div>
+</main>
+</body>
+<script type="text/javascript">
+    function confirmDelete(event){
+        event.preventDefault();
+        event.stopPropagation();
+        const customerName = event.target.closest('li[data-customer-name]').getAttribute('data-customer-name');
+        const text = 'Do you really want to delete customer "' + customerName + '"?';
+        const url = event.target.closest('a.btn').href;
+        const title = 'Confirm customer delete';
+        openConfirmModal(url, title, text);
+    }
+</script>
+</html>

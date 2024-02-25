@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head th:insert="partials/head"></head>
+<body>
+<header th:insert="partials/header"></header>
+<nav th:insert="partials/nav"></nav>
+<main class="content">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a th:href="@{/menu}">Menu</a>
+        </li>
+        <li class="breadcrumb-item" th:text="${menu.name}"></li>
+        <li class="breadcrumb-item active" aria-current="page">Menu Sections</li>
+    </ol>
+    <div class="row">
+        <div class="col-12 mt-2 mb-2" th:if="${hasFlashMessages}" th:insert="partials/flash_messages"></div>
+        <div class="col-auto flex-grow-1">
+            <h3>Available menu sections</h3>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-primary" th:href="@{|/menu/${menu.id}/menu-section/create|}">
+                <i class="bi bi-plus-circle-fill"></i>
+            </a>
+        </div>
+    </div>
+    <div th:if="${menuSectionList.isEmpty()}">
+        <ul class="list-group mt-4">
+            <li class="list-group-item">
+                <p class="text-center text-muted fst-italic fs-6">No menu section found</p>
+            </li>
+        </ul>
+    </div>
+    <div class="mt-4" th:if="${!menuSectionList.isEmpty()}">
+        <ul class="list-group">
+            <li class="list-group-item" th:attr="data-menu-section-id=${menuSection.id}, data-menu-section-name=${menuSection.name}" th:each="menuSection: ${menuSectionList}">
+                <div class="row w-100 m-0 p-0 flex-nowrap">
+                    <div class="col-auto flex-grow-1 flex-shrink-1 ps-0">
+                        <p class="p-0 m-0 fs-4" th:text="${menuSection.name}"></p>
+                        <p class="p-0 m-0 fs-6 fst-italic text-muted" th:text="${menuSection.menuItemSet.size() + ' menu items'}"></p>
+                    </div>
+                    <div class="col-auto p-0">
+                        <a class="btn btn-primary me-2" th:href="@{|/menu/${menu.id}/menu-section/${menuSection.id}/edit|}" title="Edit this menu section.">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a class="btn btn-danger" th:href="@{|/menu/${menu.id}/menu-section/${menuSection.id}/delete|}" title="Delete this menu section." onclick="confirmDelete(event);">
+                            <i class="bi bi-trash3-fill"></i>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <ul class="pagination mt-4">
+        <li class="page-item" th:if="${pageNumber > 1 && numPages > 1}">
+            <a class="page-link" th:href="@{|/menu/${menu.id}/menu-section?page=${pageNumber - 1}|}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(1, numPages, 1)}" th:class="${'page-item ' + (i == pageNumber ? 'active' : '')}">
+            <a class="page-link" th:href="@{|/menu/${menu.id}/menu-section?page=${i}|}" th:text="${i}"></a>
+        </li>
+        <li class="page-item" th:if="${pageNumber < numPages}">
+            <a class="page-link" th:href="@{|/menu/${menu.id}/menu-section?page=${pageNumber + 1}|}">Next</a>
+        </li>
+    </ul>
+    <div th:insert="partials/delete_confirm_modal"></div>
+</main>
+</body>
+<script type="text/javascript">
+    function confirmDelete(event){
+        event.preventDefault();
+        event.stopPropagation();
+        const menuSectionName = event.target.closest('li[data-menu-section-name]').getAttribute('data-menu-section-name');
+        const text = 'Do you really want to delete menu section "' + menuSectionName + '"?';
+        const url = event.target.closest('a.btn').href;
+        const title = 'Confirm menu section delete';
+        openConfirmModal(url, title, text);
+    }
+</script>
+</html>
