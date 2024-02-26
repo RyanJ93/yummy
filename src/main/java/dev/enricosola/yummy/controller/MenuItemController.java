@@ -105,6 +105,7 @@ public class MenuItemController {
             this.menuItemService.createFromForm(this.menu, menuItemCreateForm);
             redirectAttributes.addFlashAttribute("lastAction", "menuItemCreated");
         }catch(Exception ex){
+            redirectAttributes.addFlashAttribute("generalErrorMessage", ex.getMessage());
             Sentry.captureException(ex);
         }
         return "redirect:/menu/{menuId}/menu-item";
@@ -136,13 +137,18 @@ public class MenuItemController {
         if ( ( this.menuItemService.getById(Integer.parseInt(menuItemId)) ) == null ){
             throw new ResponseStatusException(NOT_FOUND, "No such menu item found.");
         }
-        if ( bindingResult.hasErrors() ){
-            model.addAttribute("menuItem", this.menuItemService.getMenuItem());
-            this.injectFormPageDependencies(model);
-            return "menu_item/edit";
+        try{
+            if ( bindingResult.hasErrors() ){
+                model.addAttribute("menuItem", this.menuItemService.getMenuItem());
+                this.injectFormPageDependencies(model);
+                return "menu_item/edit";
+            }
+            this.menuItemService.updateFromForm(menuItemEditForm);
+            redirectAttributes.addFlashAttribute("lastAction", "menuItemUpdated");
+        }catch(Exception ex){
+            redirectAttributes.addFlashAttribute("generalErrorMessage", ex.getMessage());
+            Sentry.captureException(ex);
         }
-        this.menuItemService.updateFromForm(menuItemEditForm);
-        redirectAttributes.addFlashAttribute("lastAction", "menuItemUpdated");
         return "redirect:/menu/{menuId}/menu-item";
     }
 

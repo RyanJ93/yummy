@@ -4,13 +4,13 @@ import org.springframework.transaction.annotation.Transactional;
 import dev.enricosola.yummy.form.menuitem.MenuItemCreateForm;
 import dev.enricosola.yummy.form.menuitem.MenuItemEditForm;
 import dev.enricosola.yummy.repository.MenuItemRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 import dev.enricosola.yummy.form.menuitem.MenuItemForm;
 import dev.enricosola.yummy.entity.MenuSection;
 import org.springframework.stereotype.Service;
 import dev.enricosola.yummy.entity.MenuItem;
 import dev.enricosola.yummy.utils.FileUtils;
+import dev.enricosola.yummy.DTO.AppConfig;
 import dev.enricosola.yummy.entity.Menu;
 import java.io.IOException;
 import java.util.Objects;
@@ -23,16 +23,15 @@ import java.io.File;
 public class MenuItemService {
     private final MenuSectionService menuSectionService;
     private final MenuItemRepository menuItemRepository;
+    private final AppConfig appConfig;
     private MenuItem menuItem;
 
-    @Value("${yummy.storage}")
-    private String storage;
-
     private String storeUploadedPicture(MultipartFile picture) throws IOException {
+        this.removePicture();
         String originalFileName = Objects.requireNonNull(picture.getOriginalFilename());
         String extension = FileUtils.getExtensionByStringHandling(originalFileName);
         String filename = this.menuItem.getId() + "." + extension;
-        picture.transferTo(new File(this.storage + "/" + filename));
+        picture.transferTo(new File(this.appConfig.getStorage() + "/" + filename));
         return filename;
     }
 
@@ -45,9 +44,10 @@ public class MenuItemService {
         return menuSection;
     }
 
-    public MenuItemService(MenuItemRepository menuItemRepository, MenuSectionService menuSectionService){
+    public MenuItemService(MenuItemRepository menuItemRepository, MenuSectionService menuSectionService, AppConfig appConfig){
         this.menuItemRepository = menuItemRepository;
         this.menuSectionService = menuSectionService;
+        this.appConfig = appConfig;
     }
 
     public MenuItem getById(int id){
@@ -77,12 +77,19 @@ public class MenuItemService {
         return this.menuItem;
     }
 
-    public MenuItem updateFromForm(MenuItemEditForm menuItemEditForm){
+    public MenuItem updateFromForm(MenuItemEditForm menuItemEditForm) throws IOException {
         MenuSection menuSection = this.lookupMenuSectionFromForm(menuItemEditForm);
+        MultipartFile picture = menuItemEditForm.getPicture();
         if ( menuItemEditForm.getRemovePicture() ){
             this.removePicture();
+            picture = null;
         }
-        return this.update(menuSection, menuItemEditForm.getName(), menuItemEditForm.getPrice(), menuItemEditForm.getDescription(), menuItemEditForm.getIngredients(), null);
+        this.update(menuSection, menuItemEditForm.getName(), menuItemEditForm.getPrice(), menuItemEditForm.getDescription(), menuItemEditForm.getIngredients(), null);
+        if ( picture != null && !picture.isEmpty() && picture.getOriginalFilename() != null ){
+            this.menuItem.setPicture(this.storeUploadedPicture(picture));
+            this.menuItemRepository.update(this.menuItem);
+        }
+        return this.menuItem;
     }
 
     public MenuItem create(Menu menu, MenuSection menuSection, String name, float price, String description, String ingredients, String picture){
@@ -104,20 +111,23 @@ public class MenuItemService {
         this.menuItem.setIngredients(ingredients);
         this.menuItem.setMenuSection(menuSection);
         this.menuItem.setUpdatedAt(new Date());
-        this.menuItem.setPicture(picture);
         this.menuItem.setPrice(price);
         this.menuItem.setName(name);
+        if ( picture != null ){
+            this.menuItem.setPicture(picture);
+        }
         return this.menuItemRepository.update(this.menuItem);
     }
 
     public void removePicture(){
         String picture = this.menuItem.getPicture();
         if ( picture != null && !picture.isEmpty() ){
-            File file = new File(this.storage + "/" + picture);
-            if ( file.exists() && file.delete() ){
-                this.menuItem.setPicture(null);
-                this.menuItemRepository.update(this.menuItem);
+            File file = new File(this.appConfig.getStorage() + "/" + picture);
+            if ( file.exists() ){
+                file.delete();
             }
+            this.menuItem.setPicture(null);
+            this.menuItemRepository.update(this.menuItem);
         }
     }
 
