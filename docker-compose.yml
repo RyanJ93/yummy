@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+    webapp:
+        image: 'enricosola/yummy:0.0.1'
+        container_name: 'yummy-webapp'
+        hostname: 'yummy-webapp'
+        restart: 'always'
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:mysql://yummy-mysql:3306/yummy?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+            - SPRING_DATASOURCE_USERNAME=yummy
+            - SPRING_DATASOURCE_PASSWORD=yummy
+            - ADMIN_USERNAME=admin
+            - ADMIN_PASSWORD=admin
+        volumes:
+            - ./data/storage:/home/yummy/storage
+        ports:
+            - '9999:8080'
+        networks:
+            - yummy-network
+
+    mysql:
+        image: 'mysql:8.0'
+        container_name: 'yummy-mysql'
+        hostname: 'yummy-mysql'
+        restart: always
+        ports:
+            - '3306:3306'
+        volumes:
+            - ./data/db:/var/lib/mysql
+            - ./logs/mysql:/var/log/mysql
+        environment:
+            MYSQL_DATABASE: yummy
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: yummy
+            MYSQL_PASSWORD: yummy
+            MYSQL_ROOT_HOST: 0.0.0.0
+        security_opt:
+            - seccomp:unconfined
+        networks:
+            - yummy-network
+
+networks:
+    yummy-network:
+        driver: bridge
