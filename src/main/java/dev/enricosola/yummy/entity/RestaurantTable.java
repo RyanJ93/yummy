@@ -1,14 +1,19 @@
 package dev.enricosola.yummy.entity;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Date;
+import java.io.Serial;
 import java.util.Set;
 
 @Entity
 @Table(name = "restaurant_tables")
 public class RestaurantTable implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -367030158681808659L;
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)

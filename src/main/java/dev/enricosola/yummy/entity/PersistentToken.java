@@ -2,11 +2,15 @@ package dev.enricosola.yummy.entity;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.io.Serial;
 import java.util.Date;
 
 @Entity
 @Table(name = "persistent_tokens")
 public class PersistentToken implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 4807147561755432420L;
+
     @Column(name = "series")
     @Id
     private String series;

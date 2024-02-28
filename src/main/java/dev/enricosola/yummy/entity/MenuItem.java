@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Date;
+import java.io.Serial;
 import java.util.Set;
 
 @Entity
 @Table(name = "menu_items")
 public class MenuItem implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -5666434958120393167L;
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)

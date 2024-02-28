@@ -5,11 +5,15 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Date;
+import java.io.Serial;
 import java.util.Set;
 
 @Entity
 @Table(name = "customers")
 public class Customer implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 5449572455193184760L;
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)

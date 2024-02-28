@@ -2,11 +2,15 @@ package dev.enricosola.yummy.entity;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.io.Serial;
 import java.util.Date;
 
 @Entity
 @Table(name = "orders")
 public class Order implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 4099583324950830989L;
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
