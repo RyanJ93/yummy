@@ -10,12 +10,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import static org.hibernate.cfg.C3p0Settings.*;
 import jakarta.persistence.SharedCacheMode;
 import jakarta.persistence.ValidationMode;
 import javax.sql.DataSource;
 import java.util.Properties;
-
-import static org.hibernate.cfg.C3p0Settings.*;
 
 @Configuration
 @EnableTransactionManagement
